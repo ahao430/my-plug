@@ -3,15 +3,30 @@ var SwipePage = (function(){
     canLeft: true,
     canRight: true,
     curIndex: 0,
+    navLength: 1,
     dom: 'body',
     prevCallback: null,
     nextCallback: null,
+    firstCallback: null,
+    lastCallback: null,
     transition: 'all 0.3s linear'
+  }
+
+  function throttle (fn, wait) {
+    var last = 0;
+    return function(){
+      var curr = +new Date()
+      if (curr - last > wait){
+        fn.apply(this, arguments)
+        last = curr 
+      }
+    }
   }
 
   function Swipe (opt) {
     var _self = this
-  
+
+    
     if (typeof(opt) === 'object') {
       opt = Object.assign(defaults, opt)
     } else {
@@ -26,12 +41,12 @@ var SwipePage = (function(){
       var dom = document.querySelector(opt.dom)
 
       dom.addEventListener('touchstart', function(e){
-          console.log(e.touches[0])
+          // console.log(e.touches[0])
           startX = e.touches[0].screenX;
           startY = e.touches[0].screenY;
           startTime = new Date().getTime();
       });
-      dom.addEventListener('touchmove', Util.throttle(function(e){
+      dom.addEventListener('touchmove', throttle(function(e){
           // console.log(e.changedTouches[0])
           var x = e.changedTouches[0].screenX;
           var y = e.changedTouches[0].screenY;
@@ -43,11 +58,9 @@ var SwipePage = (function(){
 
           if (absY >= absX) return;
           if (deltaX > 0) {
-            if (curNavIndex === 0) return;
             if (!opt.canRight) return;
           }
           if (deltaX < 0) {
-            if (curNavIndex === navLength - 1) return;
             if (!opt.canLeft) return;
           }
 
@@ -82,11 +95,24 @@ var SwipePage = (function(){
     }
 
     this._changePage = function(opt) {
+      var dom = document.querySelector(opt.dom)
       if (absX > absY && absX >= 50) {
+        // 左滑，下一页
         if (deltaX < 0 && opt.canLeft) {
-          opt.prevCallback && opt.prevCallback()
+          if (opt.curIndex === opt.navLength - 1) {
+            dom.style.transform = 'translateX(' + 0 +'px)';
+            opt.lastCallback && opt.lastCallback()
+          } else {
+            opt.prevCallback && opt.nextCallback()
+          }
         } else if (deltaX > 0 && opt.canRight){
-          opt.nextCallback && opt.nextCallback()
+        // 右滑，上一页
+          if (opt.curIndex === 0) {
+            dom.style.transform = 'translateX(' + 0 +'px)';
+            opt.lastCallback && opt.firstCallback()
+          } else {
+            opt.nextCallback && opt.prevCallback()
+          }
         }           
       }
     }
@@ -117,5 +143,5 @@ var SwipePage = (function(){
     }
   }
 
-  return _obj
+  return _obj.init
 })()

@@ -1,6 +1,6 @@
 ;var Util = (function(){
 
-  var obj
+  var obj= {}
 
   /* 提示框 */
 
@@ -48,13 +48,14 @@
       clearTimeout(_self.timer3);
     })
   }
-  obj.successTip = function (html, time) {
+
+  obj.successTip = function(html, time) {
     tip(html, 'success', time)
   }
   obj.failTip = function (html, time) {
     tip(html, 'fail', time)
   },
-  obj.tip = function (html, time) {
+  obj.tip = function(html, time) {
     tip(html, 'normal', time)
   }
 
