@@ -1,0 +1,11 @@
+{
+  "name": "swipepage",
+  "version": "1.0.0",
+  "description": "移动端滑动左右切换页面",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
