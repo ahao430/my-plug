@@ -27,8 +27,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent; 
 }
-}
-.my-audio-player .player-left .player-btn img{
+.my-audio-player .player-left .player-btn-img{
   width: 100%;
   height: 100%;
 }

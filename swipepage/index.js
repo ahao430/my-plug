@@ -11,8 +11,7 @@ var SwipePage = (function(){
 
   function Swipe (opt) {
     var _self = this
-
-    
+  
     if (typeof(opt) === 'object') {
       opt = Object.assign(defaults, opt)
     } else {

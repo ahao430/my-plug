@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo</title>
+  <link rel="stylesheet" href="my_audio.css">
+  <style>
+    
+  </style>
+</head>
+<body>
+  <div id="audio"></div>
+
+  <script src="my_audio.js"></script>
+  <script>
+    AudioPlayer.init({
+      el: '#audio',
+      src: 'demo.mp3',
+      name: '未知歌曲',
+      author: '佚名',
+      path: './'
+    })
+  </script>
+</body>
+</html>
