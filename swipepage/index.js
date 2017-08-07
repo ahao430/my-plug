@@ -69,11 +69,11 @@ var SwipePage = (function(){
 
         // 判断快速滑动还是慢速
         if (deltaTime <= 100) {
-          _changePage(opt);
+          _self._changePage(opt);
         } else {
           var screenWidth = screen.width;
           if (absX >= screenWidth/3) {
-            this._changePage(opt);
+            _self._changePage(opt);
           } else {
             dom.style.transform = 'translateX(' + 0 +'px)';     
           }
