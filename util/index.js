@@ -1,20 +1,24 @@
-;var Util = (function(){
-
-  var obj= {}
-
-  /* 提示框 */
-
-  function tip (html, type, time) {
+(function (name, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([name], factory); // AMD
+  } else if (typeof exports === 'object') {
+    module.exports = factory; // Node
+  } else {
+    factory(window[name]); // Browser global
+  }
+})('util', function(){
+  var tip = function(html, type, time) {
     var tipid = 'tipMessage';
+    var timer1, timer2, timer3
 
     if (lastTip = document.getElementById(tipid)) {
-      clearTimeout(_self.timer1);
-      clearTimeout(_self.timer2);
-      clearTimeout(_self.timer3);
+      clearTimeout(obj.timer1);
+      clearTimeout(obj.timer2);
+      clearTimeout(obj.timer3);
       document.body.removeChild(lastTip);
     }
     
-    var delay = time || 1000
+    var delay = (time + 600) || 3600
     var tip = document.createElement('div')
     var color = '#fff';
     if (type) {
@@ -24,43 +28,33 @@
         color = '#f00';
       }
     }
-    tip.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; top: -100%; margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: 16px; padding: 10px; line-height: 1.3; transition: all 0.5s linear; border-radius: 10px; color:' + color + ';';
+    tip.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; top: -100%; margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: 16px; padding: 10px; line-height: 1.3; transition: all 0.3s linear; border-radius: 10px; color:' + color + ';';
     tip.id = tipid;
     tip.innerHTML = html;
     document.body.appendChild(tip);
-    _self.timer1 = setTimeout(function(){
+    timer1 = setTimeout(function(){
       tip.style.top = '100px';
-      _self.timer1 = null;
+      timer1 = null;
     }, 1);
-    _self.timer2 = setTimeout(function(){
+    timer2 = setTimeout(function(){
       tip.style.top = '-100%';
-      _self.timer2 = null;
-      _self.timer3 = setTimeout(function(){
+      timer2 = null;
+      timer3 = setTimeout(function(){
         document.body.removeChild(tip);
-        _self.timer3 = null;
-      }, 200);
+        timer3 = null;
+      }, 300);
     }, delay);
 
     tip.addEventListener('click', function(){
       document.body.removeChild(tip);
-      clearTimeout(_self.timer1);
-      clearTimeout(_self.timer2);
-      clearTimeout(_self.timer3);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
     })
   }
 
-  obj.successTip = function(html, time) {
-    tip(html, 'success', time)
-  }
-  obj.failTip = function (html, time) {
-    tip(html, 'fail', time)
-  },
-  obj.tip = function(html, time) {
-    tip(html, 'normal', time)
-  }
-
   /* 性能，节流函数*/
-  obj.debounce = function(fn, wait){
+  var debounce = function(fn, wait){
     var timeoutID = null;
 
     return function() {
@@ -72,7 +66,7 @@
       }, wait);
     };
   }
-  obj.throttle = function(fn, wait) {
+  var throttle = function(fn, wait) {
     var last = 0;
     return function(){
       var curr = +new Date()
@@ -84,7 +78,7 @@
   };
 
   /* url */
-  obj.getUrlParam = function(name){  
+  function getUrlParam(name){  
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
     var r = window.location.search.substr(1).match(reg);  
     if (r != null) {
@@ -95,20 +89,20 @@
   }
 
   /* cookie */
-  obj.setCookie = function(name,value){
+  function setCookie(name,value){
     var Days = 30;
     var exp = new Date();
     exp.setTime(exp.getTime() + Days*24*60*60*1000);
     document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
   }
-  obj.getCookie = function(name){
+  function getCookie(name){
     var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
     if(arr=document.cookie.match(reg))
     return unescape(arr[2]);
     else
     return null;
   }
-  obj.delCookie = function(name){
+  function delCookie(name){
     var exp = new Date();
     exp.setTime(exp.getTime() - 1);
     var cval=getCookie(name);
@@ -117,19 +111,19 @@
   }
 
   /* 操作class */
-  obj.hasClass = function(el, cls){ 
+  function hasClass(el, cls){ 
     return el.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)')); 
   } 
-  obj.addClass = function(el, cls){ 
+  function addClass(el, cls){ 
     if (!this.hasClass(el, cls)) el.className += " " + cls; 
   }  
-  obj.removeClass = function(el, cls){ 
+  function removeClass(el, cls){ 
     if (hasClass(el, cls)) { 
       var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)'); 
       el.className = el.className.replace(reg, ' '); 
     } 
   } 
-  obj.toggleClass = function(el,cls){ 
+  function toggleClass(el,cls){ 
     if(hasClass(el,cls)){ 
       removeClass(el, cls); 
     }else{ 
@@ -138,7 +132,7 @@
   } 
 
   /* formatDate */
-  obj.formatDate = function(date, fmt){
+  function formatDate(date, fmt){
     var o = {         
       "M+" : this.getMonth()+1, //月份         
       "d+" : this.getDate(), //日         
@@ -172,5 +166,31 @@
     return fmt;         
   }
 
-  return obj;
-})();
+  return {
+    successTip: function(html, time) {
+      tip(html, 'success', time)
+    },
+    failTip: function (html, time) {
+      tip(html, 'fail', time)
+    },
+    tip: function(html, time) {
+      tip(html, 'normal', time)
+    },
+    debounce: debounce,
+    throttle: throttle,
+    getUrlParam: getUrlParam,
+    setCookie: setCookie,
+    getCookie: getCookie,
+    delCookie: delCookie,
+    hasClass: hasClass,
+    addClass: addClass,
+    removeClass: removeClass,
+    toggleClass: toggleClass,
+    formatDate: formatDate
+  }
+}) 
+
+  
+
+
+  
