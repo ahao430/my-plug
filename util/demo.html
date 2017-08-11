@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="format-detection" content="email=no">
+  <title>Toast demo</title>
+  <style type="text/css">
+    html, body{margin: 0;padding: 0;}
+    h3{margin: 0;padding: 10px 20px;background: #07F3D9}
+    ul{margin: 0;padding: 0;border-bottom: 10px solid #f3f3f3;}
+    li{
+      list-style: none;
+      color: #777;
+      border-bottom: 1px solid #ccc;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    p{margin: 0;padding: 0;}
+    button{
+      border: none;background: #61b347;color: #fff;
+      border-radius: 10px;
+      box-sizing: border-box;display: inline-block;
+      width: 80px; height: 30px;line-height: 30px;
+      --webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+    .success{color: #61b347;}
+    .error{color: #f00;}
+    .tip{color: #777;}
+  </style>
+</head>
+<body>
+  <h3>toast demo</h3>
+  <ul>
+    <li><p class="success">成功！1s消失</p><button id="btn1">点我</button></li>
+    <li><p class="error">失败！2s消失</p><button id="btn2">点我</button></li>
+    <li><p class="tip">提示！3s消失</p><button id="btn3">点我</button></li>
+  </ul>
+  <ul>
+    <li><p class="success">成功！下方出现</p><button id="btn4">点我</button></li>
+    <li><p class="error">失败！下方出现</p><button id="btn5">点我</button></li>
+    <li><p class="tip">提示！下方出现</p><button id="btn6">点我</button></li>
+  </ul>
+  <ul> 
+    <li><p class="tip">提示！点击才消失！</p><button id="btn7">点我</button></li>      
+  </ul>
+
+  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript">
+    document.getElementById('btn1').onclick = function(){
+      Util.toast({
+        msg: 'toast1，1s后消失',
+        type: 'success',
+        delay: 1000,
+        from: 'top'
+      })
+    }
+    document.getElementById('btn2').onclick = function(){
+      Util.toast({
+        msg: 'toast2，2s后消失',
+        type: 'error',
+        delay: 2000,
+        from: 'top'
+      })
+    }
+    document.getElementById('btn3').onclick = function(){
+      Util.toast({
+        msg: 'toast3，3s后消失',
+        delay: 3000,
+        from: 'top'
+      })
+    }
+    document.getElementById('btn4').onclick = function(){
+      Util.toast({
+        msg: 'toast4，1s后消失',
+        type: 'success',
+        delay: 1000,
+        from: 'bottom'
+      })
+    }
+    document.getElementById('btn5').onclick = function(){
+      Util.toast({
+        msg: 'toast5，1s后消失',
+        type: 'error',
+        delay: 1000,
+        from: 'bottom'
+      })
+    }
+    document.getElementById('btn6').onclick = function(){
+      Util.toast({
+        msg: 'toast6，1s后消失',
+        delay: 1000,
+        from: 'bottom'
+      })
+    }
+    document.getElementById('btn7').onclick = function(){
+      Util.toast({
+        msg: 'toast7，点我消失',
+        delay: 0,
+        from: 'top'
+      })
+    }
+  </script>
+</body>
+</html>
