@@ -44,7 +44,7 @@
     }
 
     var div = document.createElement('div')
-    div.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; ' + startPos + ' margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: 16px; padding: 10px; line-height: 1.3; transition: all ' + (opt.speed/1000) + 's ease-in-out; border-radius: 10px; color: #fff; background:' + bg + ';'
+    div.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; z-index: 10000;' + startPos + ' margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: 16px; padding: 10px; line-height: 1.3; transition: all ' + (opt.speed/1000) + 's ease-in-out; border-radius: 10px; color: #fff; background:' + bg + ';'
     div.innerHTML = opt.msg;
     document.body.appendChild(div)
 
@@ -55,10 +55,10 @@
     } else {
       setTimeout(function(){
         show()
-      }, 0);  
+      }, 0);
     }
-    
-    
+
+
 
     function show(){
       if (opt.from === 'top') {
@@ -67,11 +67,11 @@
         div.style.bottom = '100px'
       }
       div.style.opacity = 1
-      
+
       timer1 = setTimeout(function(){
         // 进入过渡结束
         timer1 = null
-        if (opt.duration !== 0) {          
+        if (opt.duration !== 0) {
           timer2 = setTimeout(function(){
             // 显示结束
             if (opt.from === 'top') {
