@@ -26,6 +26,8 @@
     Util.toast.setDefaults(def)
 ### 查看当前默认配置
     Util.toast.defaults()
+### demo
+(toast-demo)[https://ahao430.github.io/my-plug/util/toast-demo.html]
 ...
 ## debounce和throttle
 简单实现防抖和节流
@@ -47,6 +49,8 @@
     Util.toggleClass(el, className)
     Util.toggleActive(ul, activeClass) 
     设置ul子元素点击选中active，其他取消active，不填写activeClass默认'active'
+### demo
+(class-demo)[https://ahao430.github.io/my-plug/util/class-demo.html]
 ...
 ## 日期时间格式化
     Util.formatDate(date, format)
