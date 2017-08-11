@@ -29,6 +29,7 @@
       outline: none;
     }
     .success{color: #61b347;}
+    .warn{color: #a18963;}
     .error{color: #f00;}
     .tip{color: #777;}
   </style>
@@ -47,6 +48,7 @@
   </ul>
   <ul> 
     <li><p class="tip">提示！点击才消失！</p><button id="btn7">点我</button></li>      
+    <li><p class="warn">提示！点击才消失！</p><button id="btn8">点我</button></li>      
   </ul>
 
   <script type="text/javascript" src="index.js"></script>
@@ -100,6 +102,14 @@
     document.getElementById('btn7').onclick = function(){
       Util.toast({
         msg: 'toast7，点我消失',
+        duration: 0,
+        from: 'top'
+      })
+    }
+    document.getElementById('btn8').onclick = function(){
+      Util.toast({
+        msg: 'toast7，点我消失',
+        type: 'warn',
         duration: 0,
         from: 'top'
       })

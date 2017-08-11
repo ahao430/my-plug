@@ -28,7 +28,10 @@
     switch (opt.type) {
       case 'success':
         bg = 'rgba(0,255,0,' + opt.opacity + ')'
-        break;
+        break
+      case 'warn':
+        bg = 'rgba(160,137,100,' + opt.opacity + ')'
+        break
       case 'error':
         bg = 'rgba(255,0,0,'+ opt.opacity +')'
         break
