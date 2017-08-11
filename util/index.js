@@ -13,7 +13,7 @@
     var defaults = {
       msg: '',
       type: 'normal',
-      delay: 1000,
+      duration: 1000,
       from: 'top',
       speed: 500,
       opacity: 0.7
@@ -50,7 +50,7 @@
 
     var timer1, timer2, timer3
 
-    if (opt.delay === 0) {
+    if (opt.duration === 0) {
       show()
     } else {
       setTimeout(function(){
@@ -71,7 +71,7 @@
       timer1 = setTimeout(function(){
         // 进入过渡结束
         timer1 = null
-        if (opt.delay !== 0) {          
+        if (opt.duration !== 0) {          
           timer2 = setTimeout(function(){
             // 显示结束
             if (opt.from === 'top') {
@@ -86,7 +86,7 @@
               timer3 = null
               obj.lastToastOpt = null
             }, opt.speed)
-          }, opt.delay)
+          }, opt.duration)
         } else {
           div.addEventListener('click', function(){
             document.body.removeChild(div)
