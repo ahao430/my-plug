@@ -9,15 +9,17 @@
 })('Util', function(){
   var obj = {}
 
+  var toastDefaults = {
+    msg: '',
+    type: 'normal',
+    duration: 1000,
+    from: 'top',
+    speed: 500,
+    opacity: 0.7
+  }
   obj.toast = function(opt) {
-    var defaults = {
-      msg: '',
-      type: 'normal',
-      duration: 1000,
-      from: 'top',
-      speed: 500,
-      opacity: 0.7
-    }
+    var defaults = toastDefaults
+
     opt = Object.assign(defaults, opt)
     // console.log(obj.lastToastOpt, opt)
     if (JSON.stringify(opt) === JSON.stringify(obj.lastToastOpt)) return false
@@ -102,6 +104,12 @@
         }
       }, opt.speed)
     }
+  }
+  obj.toast.setDefaults = function(def){
+    toastDefaults = Object.assign(toastDefaults, def)
+  }
+  obj.toast.defaults = function(){
+    return toastDefaults
   }
 
   /* 性能，节流函数*/
