@@ -40,7 +40,7 @@
     Util.getCookie(name, value)
     Util.delCookie(name)
 ...
-## class操作
+## class操作 
     Util.hasClass(el, className)
     Util.addClass(el, className)
     Util.removeClass(el, className)
