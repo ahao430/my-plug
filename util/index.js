@@ -174,20 +174,33 @@
     return el.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
   }
   obj.addClass = function(el, cls){
-    if (!this.hasClass(el, cls)) el.className += " " + cls;
+    if (!obj.hasClass(el, cls)) el.className += " " + cls;
   }
   obj.removeClass = function(el, cls){
-    if (hasClass(el, cls)) {
+    if (obj.hasClass(el, cls)) {
       var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
       el.className = el.className.replace(reg, ' ');
     }
   }
   obj.toggleClass = function(el,cls){
-    if(hasClass(el,cls)){
-      removeClass(el, cls);
+    if(obj.hasClass(el,cls)){
+      obj.removeClass(el, cls);
     }else{
-      addClass(el, cls);
+      obj.addClass(el, cls);
     }
+  }
+  obj.toggleActive = function(ul, cls){
+    cls = cls || 'active'
+    ul.addEventListener('click', function(e){
+      var li = e.target
+      if (li.parentNode = ul) {
+        if (obj.hasClass(li, cls)) return;
+        Array.prototype.forEach.call(ul.children, function(li){
+          obj.removeClass(li, cls)
+        })
+        obj.addClass(li, cls)
+      }
+    })
   }
 
   /* formatDate */

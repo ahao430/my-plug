@@ -45,6 +45,8 @@
     Util.addClass(el, className)
     Util.removeClass(el, className)
     Util.toggleClass(el, className)
+    Util.toggleActive(ul, activeClass) 
+    设置ul子元素点击选中active，其他取消active，不填写activeClass默认'active'
 ...
 ## 日期时间格式化
     Util.formatDate(date, format)
