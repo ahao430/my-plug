@@ -238,5 +238,58 @@
     return fmt;
   }
 
+  /* 事件 */
+  obj.Event = function(){
+    this._listener = {};
+  }
+  obj.Event.prototype = {
+    constructor: obj.Event,
+    add: function(name, fn){
+      if(typeof name === 'string' && typeof fn === 'function'){
+        //如果不存在name，就新建一个
+        if(typeof this._listener[name] === 'undefined'){
+          this._listener[name] = [fn];
+        }
+        //否则，直接往相应actinoName里面塞
+        else{
+          this._listener[name].push(fn);
+        }
+      }
+    },
+    trigger: function(name){
+      var arr = this._listener[name];
+      //触发一系列name里的函数
+      if(arr instanceof Array){
+        for(var i = 0, len = arr.length; i < len; i++){
+          if(typeof arr[i] === 'function'){
+            arr[i]();
+          }
+        }
+      }
+      arr = null;
+    },
+    remove: function(name, fn){
+      var arr = this._listener[name];
+      if(typeof name === 'string' && arr instanceof Array){
+        if(typeof fn === 'function'){
+          //清除name中对应的fn方法
+          for(var i=0, len = arr.length; i < len; i++){
+            if(arr[i] === fn){
+              this._listener[name].splice(i,1);
+            }
+          }
+        }
+      }
+      arr = null;
+    },
+    removeAll: function(name, fn){
+      var arr = this._listener[name]
+      if(typeof name === 'string' && arr instanceof Array){
+        this._listener[name] = []
+      }
+      arr = null
+    }
+  };
+
   return obj
 })

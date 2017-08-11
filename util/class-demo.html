@@ -5,11 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta name="format-detection" content="telephone=no">
   <meta name="format-detection" content="email=no">
-  <title>Toast demo</title>
+  <title>class demo</title>
   <style type="text/css">
     html, body{margin: 0;padding: 0;}
     h3{
       margin: 0;padding: 10px 20px;background: #07F3D9;
+    }
+    .example{
+      width: auto;
+      height: 30px;
+      line-height: 30px;
+      background-color: #ccc;
+      margin: 20px 0;
+      padding: 10px;
     }
     ul{
       display: flex;
@@ -21,6 +29,7 @@
       border-radius: 10px;
       overflow: hidden;
       background: #ccc;
+      margin-top: 30px;
     }
     li{
       flex: 1;
@@ -28,16 +37,48 @@
       text-align: center;
       padding: 10px 0;
     }
-    li.active{
+    .active{
       background: #f00;
       color: #fff;
       border-radius: 10px;
       overflow: hidden;
     }
+    p{margin: 0;padding: 0;}
+    .btns{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    button{
+      border: none; 
+      background-color: #999;
+      color: #ccc;
+      border-radius: 10px;
+      box-sizing: border-box;display: inline-block;
+      height: 40px;line-height: 20px;
+      --webkit-tap-highlight-color: transparent;
+      outline: none;
+      overflow: hidden;
+      margin: 0 5px;
+      padding: 10px;
+      flex: 1;
+    }
+    button:active{
+      color: #fff;
+    }
   </style>
 </head>
 <body>
   <h3>class demo</h3>
+
+  <div class="active example" id="example">看我的classname: <span id="text">active example</span></div>
+
+  <div class="btns">
+    <button id="btn1">add "active"</button>
+    <button id="btn2">remove "active"</button>
+    <button id="btn3">toggle "active"</button>
+  </div>
+
   <ul id="nav">
     <li class="active">tab a</li>
     <li>tab b</li>
@@ -45,10 +86,42 @@
     <li>tab d</li>
   </ul>
 
+  <div class="btns">
+    <button id="btn4">set toggleActive</button>
+  </div>
+
   <script type="text/javascript" src="index.js"></script>
-  <script type="text/javascript"> 
+  <script type="text/javascript">
+    var btn1 = document.getElementById('btn1')
+    var btn2 = document.getElementById('btn2')
+    var btn3 = document.getElementById('btn3')
+    var btn4 = document.getElementById('btn4')
+    var example = document.getElementById('example')
+    var text = document.getElementById('text')
     var nav = document.getElementById('nav')
-    Util.toggleActive(nav)
+
+    var Ev = new Util.Event()
+
+    btn1.addEventListener('click', function(){
+      Util.addClass(example, 'active')
+      Ev.trigger('exampleClassChange')
+    })
+    btn2.addEventListener('click', function(){
+      Util.removeClass(example, 'active')
+      Ev.trigger('exampleClassChange')
+    })
+    btn3.addEventListener('click', function(){
+      Util.toggleClass(example, 'active')
+      Ev.trigger('exampleClassChange')
+    })
+    btn4.addEventListener('click', function(){
+      Util.toggleActive(nav)
+    })
+  
+    Ev.add('exampleClassChange', function(){
+      text.innerText = example.className
+    })
+    
   </script>
 </body>
 </html>
