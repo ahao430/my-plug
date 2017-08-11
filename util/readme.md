@@ -63,5 +63,14 @@ m：分
 s：秒
 q：季度
 S：毫秒
+...
+## 自定义事件
+    var Ev = new Util.Event()
+    btn.addEventListener('click', function(){
+      Ev.trigger('event1')
+    })
+    Ev.add('event1', function(){
+      // do sth
+    })
    
 
