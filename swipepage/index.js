@@ -57,6 +57,11 @@ var SwipePage = (function(){
           var absX = Math.abs(deltaX);
           var absY = Math.abs(deltaY);
 
+          startX = x
+          startY = y
+
+          if(absY > absX) return;
+
           if(dom.style.transform !== 'translateX(0px)'){
             body.style.overflow = 'hidden'
           }else{
@@ -74,6 +79,7 @@ var SwipePage = (function(){
       },100));
       dom.addEventListener('touchend', function(e){
         // console.log(e.changedTouches[0]);
+        body.style.overflow = 'auto'
 
         endX = e.changedTouches[0].screenX;
         endY = e.changedTouches[0].screenY;
