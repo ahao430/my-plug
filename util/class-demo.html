@@ -104,23 +104,23 @@
 
     btn1.addEventListener('click', function(){
       Util.addClass(example, 'active')
-      Ev.trigger('exampleClassChange')
+      checkClass()
     })
     btn2.addEventListener('click', function(){
       Util.removeClass(example, 'active')
-      Ev.trigger('exampleClassChange')
+      checkClass()
     })
     btn3.addEventListener('click', function(){
       Util.toggleClass(example, 'active')
-      Ev.trigger('exampleClassChange')
+      checkClass()
     })
     btn4.addEventListener('click', function(){
       Util.toggleActive(nav)
     })
-  
-    Ev.add('exampleClassChange', function(){
+    
+    function checkClass () {
       text.innerText = example.className
-    })
+    }
     
   </script>
 </body>
