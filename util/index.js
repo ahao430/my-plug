@@ -9,18 +9,42 @@
 })('Util', function(){
   var obj = {}
 
+  obj.clone = function(oldObj){
+    if (typeof(oldObj) != 'object') return oldObj;
+    if (oldObj == null) return oldObj;
+    var newObj = new Object();
+    for (var i in oldObj) {
+      newObj[i] = obj.clone(oldObj[i]);
+    }
+    return newObj;
+  }
+  obj.extend = function(){
+    var args = arguments;
+    if (args.length < 2) return;
+    var temp = obj.clone(args[0]); //调用复制对象方法
+    for (var n = 1; n < args.length; n++) {
+      for (var i in args[n]) {
+        temp[i] = args[n][i];
+      }
+    }
+    return temp;
+  }
+
   var toastDefaults = {
     msg: '',
     type: 'normal',
     duration: 1000,
     from: 'top',
     speed: 500,
-    opacity: 0.7
+    opacity: 0.9,
+    fontSize: '16px',
+    padding: '10px',
+    callback: null
   }
   obj.toast = function(opt) {
     var defaults = toastDefaults
 
-    opt = Object.assign(defaults, opt)
+    opt = obj.extend(defaults, opt)
     // console.log(obj.lastToastOpt, opt)
     if (JSON.stringify(opt) === JSON.stringify(obj.lastToastOpt)) return false
 
@@ -29,7 +53,7 @@
     var bg
     switch (opt.type) {
       case 'success':
-        bg = 'rgba(0,255,0,' + opt.opacity + ')'
+        bg = 'rgba(0,0,0,' + opt.opacity + ')'
         break
       case 'warn':
         bg = 'rgba(160,137,100,' + opt.opacity + ')'
@@ -49,7 +73,7 @@
     }
 
     var div = document.createElement('div')
-    div.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; z-index: 10000;' + startPos + ' margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: 16px; padding: 10px; line-height: 1.3; transition: all ' + (opt.speed/1000) + 's ease-in-out; border-radius: 10px; color: #fff; background:' + bg + ';'
+    div.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; z-index: 10000;' + startPos + ' margin: 0 auto; left: 50%; transform: translateX(-50%); font-size: ' + opt.fontSize +'; padding: '+ opt.padding +'; line-height: 1.3; transition: all ' + (opt.speed/1000) + 's ease-in-out; border-radius: 10px; color: #fff; background:' + bg + ';'
     div.innerHTML = opt.msg;
     document.body.appendChild(div)
 
@@ -90,6 +114,9 @@
               document.body.removeChild(div);
               timer3 = null
               obj.lastToastOpt = null
+              if(typeof(opt.callback) === 'function'){
+                opt.callback()
+              }
             }, opt.speed)
           }, opt.duration)
         } else {
@@ -99,6 +126,9 @@
             clearTimeout(timer2)
             clearTimeout(timer3)
             obj.lastToastOpt = null
+            if(typeof(opt.callback) === 'function'){
+              opt.callback()
+            }
             // console.log(obj.lastToastOpt)
           })
         }

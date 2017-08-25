@@ -28,7 +28,11 @@ var SwipePage = (function(){
 
 
     if (typeof(opt) === 'object') {
-      opt = Object.assign(defaults, opt)
+      for(var i in defaults){
+        if(!(i in opt)){
+          opt[i] = defaults[i]
+        }
+      }
     } else {
       console.log('未配置参数或格式错误，使用默认配置')
       opt = defaults
@@ -37,35 +41,44 @@ var SwipePage = (function(){
     this.opt = opt
 
     this._swipe = function (opt) {
-      var startX, startY, startTime, endX, endY, endTime;
+      var startX, startY, startTime, lastX, lastY, endX, endY, endTime;
       var dom = document.querySelector(opt.dom)
       var body = document.body
+      var direction = null
 
       dom.addEventListener('touchstart', function(e){
           // console.log(e.touches[0])
-          startX = e.touches[0].screenX;
-          startY = e.touches[0].screenY;
+          startX = lastX = e.touches[0].screenX;
+          startY = lastY = e.touches[0].screenY;
           startTime = new Date().getTime();
+          direction = null
       });
       dom.addEventListener('touchmove', throttle(function(e){
           // console.log(e.changedTouches[0])
           var x = e.changedTouches[0].screenX;
           var y = e.changedTouches[0].screenY;
           // console.log(x,y)
-          var deltaX = x - startX;
-          var deltaY = y - startY;
+          var deltaX = x - lastX;
+          var deltaY = y - lastY;
           var absX = Math.abs(deltaX);
           var absY = Math.abs(deltaY);
+          var newDirection = null
 
-          startX = x
-          startY = y
+          lastX = x
+          lastY = y
 
-          if(absY > absX) return;
-
-          if(dom.style.transform !== 'translateX(0px)'){
-            body.style.overflow = 'hidden'
+          if(absY > absX){
+            newDirection = 'vertical'
+            body.style.overflowX = 'hidden'
           }else{
-            body.style.overflow = 'auto'
+            newDirection = 'horizental'
+            body.style.overflowY = 'hidden'
+          }
+
+          if(!direction){
+            direction = newDirection
+          }else if(direction !== newDirection) {
+            return
           }
 
           if (deltaX > 0) {
@@ -75,11 +88,10 @@ var SwipePage = (function(){
             if (!opt.canLeft) return;
           }
 
-          dom.style.transform = 'translateX(' + deltaX +'px)';
+          dom.style.transform = 'translateX(' + (x - startX) +'px)';
       },100));
       dom.addEventListener('touchend', function(e){
         // console.log(e.changedTouches[0]);
-        body.style.overflow = 'auto'
 
         endX = e.changedTouches[0].screenX;
         endY = e.changedTouches[0].screenY;
@@ -89,6 +101,8 @@ var SwipePage = (function(){
         deltaY = endY - startY;
         absX = Math.abs(deltaX);
         absY = Math.abs(deltaY);
+
+        body.style.overflow = 'auto'
 
         deltaTime = endTime - startTime;
 
@@ -101,6 +115,7 @@ var SwipePage = (function(){
             _self._changePage(opt);
           } else {
             dom.style.transform = 'translateX(' + 0 +'px)';
+            body.style.overflow = 'auto'
           }
 
         }
