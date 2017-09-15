@@ -142,6 +142,29 @@
     return toastDefaults
   }
 
+  /* 自定义confirm */
+  obj.confirm = function(msg, tabNames, cb){
+    tabNames = tabNames || ['取消', '确定']
+    var div = document.createElement('div')
+    div.style.cssText = 'background: rgba(0,0,0,0.5);position: fixed; z-index: 10000; margin: 0 auto; left: 50%; top: 20%; transform: translate(-50%, -50%); width: 55%; font-size: 14px; line-height: 1.3; transition: all 0.2s ease-in-out; border-radius: 10px; background: #fff; border: 1px solid #ccc;'
+    div.innerHTML = '<div>\
+                      <div style="border-bottom: 1px solid #ccc; padding: 10px; color: #000; font-size: 16px;">' + msg + '</div>\
+                      <ul style="text-align: center; font-size: 0;padding: 10px;">\
+                        <li id="cancelConfirmBtn" style="display: inline-block; text-align: enter; font-size: 16px; width: 50%;">' + tabNames[0] + '</li>\
+                        <li id="confirmConfirmBtn" style="display: inline-block; text-align: enter; font-size: 16px; width: 50%;color: #00f;">' + tabNames[1] + '</li>\
+                      </ul>\
+                    </div>';
+    document.body.appendChild(div)
+    var confirmConfirmBtn = document.getElementById('confirmConfirmBtn')
+    var cancelConfirmBtn = document.getElementById('cancelConfirmBtn')
+    confirmConfirmBtn.addEventListener('click', function(){
+      cb&&cb()
+    })
+    cancelConfirmBtn.addEventListener('click', function(){
+      document.body.removeChild(div)
+    })
+  }
+
   /* 性能，节流函数*/
   obj.debounce = function(fn, wait){
     var timeoutID = null;
