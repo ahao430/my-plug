@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>lazyload</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no, email=no" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style">
+  <meta name="msapplication-tap-highlight" content="no">
+  <style>
+    img{max-width: 100%;}
+    .lazy{margin: 50px 0;}
+    ul{margin: 0; padding: 0;}
+    li{list-style: none;text-align: center;}
+    footer{text-align: center; color: #999;}
+  </style>
+</head>
+<body>
+  <ul id="list">
+    <!-- 图片 -->
+  </ul>
+  <footer id="loadmore">正在加载更多...</footer>
+  
+  <script src="lazyload.js"></script>
+  <script src="loadmore.js"></script>
+  <script>
+    var pics = ['img/Chrysanthemum.jpg', 'img/Desert.jpg', 'img/Hydrangeas.jpg', 'img/Jellyfish.jpg', 'img/Koala.jpg', 'img/Lighthouse.jpg', 'img/Penguins.jpg', 'img/Tulips.jpg']
+    var list = document.getElementById('list')
+    
+    function addPic(){
+      var str = ''
+      pics.forEach(function(pic){
+        str += '<li><img class="lazy" src="loading.gif" data-src="' + pic + '" alt=""></li>'
+      })
+      list.innerHTML += str
+    }
+
+    addPic()
+    var iframeWidth = document.querySelectorAll('#list li')[0].clientWidth
+
+    LoadMore('#loadmore', addPic)
+    LazyLoad({
+      el: '.lazy',
+      iframe: true,
+      iframeWidth: iframeWidth,
+      bottom: -100
+    })
+  </script>
+</body>
+</html>
