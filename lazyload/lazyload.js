@@ -63,7 +63,9 @@
     offsetParent: null, // 图片向上定位次数, 当offsetTop不相对body时
     iframe: false, // 可选择iframe加载防盗链图片
     iframeWidth: null, // 可设置iframe宽度，否则为图片默认宽度
-    bottom: 0 // 底部距离，预加载图片, 0或负值
+    bottom: 0, // 底部距离，预加载图片, 0或负值
+    imgWidth: null, // 图片宽度
+    imgHeight: null, // 图片高度
   }
   // 加载
   function lazyload(opt) {
@@ -81,12 +83,19 @@
           offsetNode = offsetNode.parentNode
         }
       }
-      if(offsetNode.offsetTop + opt.bottom < seeHeight + scrollTop ) {
+      var imgSize = 'max-width: 100%;'
+      if(opt.imgWidth){
+        imgSize += 'width: ' + opt.imgWidth + ';'
+      }
+      if(opt.imgHeight){
+        imgSize += 'height: ' + opt.imgHeight + ';'
+      }
+      if(offsetNode.offsetTop + parseInt(opt.bottom) < seeHeight + scrollTop ) {
         if(opt.iframe === true){
           var realsrc = pic.dataset.src
           var picWidth = pic.width
           var frameid = 'frameimg' + Math.random()
-          window.img = '<img id="img" style=\'max-width: 100%; width: 100%; height: auto;\' src=\'' + realsrc + '\'/>';
+          window.img = '<img id="img" style="' + imgSize + '" src=\'' + realsrc + '\'/>';
           window.img += '<style>html,body{margin: 0; padding: 0;} body img{box-sizing: border-box;}></style>';
           window.img += '<script>window.onload = function(){' +
             'parent.document.getElementById(\'' + frameid+ '\').width = document.getElementById(\'img\').width + \'px\';' +
@@ -99,7 +108,7 @@
           iframe.scrolling="no"
           iframe.frameBorder="0"
           if(opt.iframeWidth){
-            iframe.style.width = opt.iframeWidth + 'px'
+            iframe.style.width = opt.iframeWidth
           }
           removeClass(pic, 'lazy')
           pic.parentNode.appendChild(iframe)
