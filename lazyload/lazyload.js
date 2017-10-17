@@ -60,12 +60,13 @@
   // 配置
   var defaults = {
     el: '.lazy', // 元素， class或tag
-    offsetParent: null, // 图片向上定位次数, 当offsetTop不相对body时
     iframe: false, // 可选择iframe加载防盗链图片
-    iframeWidth: null, // 可设置iframe宽度，否则为图片默认宽度
     bottom: 0, // 底部距离，预加载图片, 0或负值
+    offsetParent: null, // 图片向上定位次数, 当offsetTop不相对body时
+    iframeWidth: null, // 可设置iframe宽度，否则为图片默认宽度
     imgWidth: null, // 图片宽度
     imgHeight: null, // 图片高度
+    iframeCallback: null // iframe回调函数，参数为iframe元素，可用parent.document向上取值
   }
   // 加载
   function lazyload(opt) {
@@ -96,11 +97,14 @@
           var picWidth = pic.width
           var frameid = 'frameimg' + Math.random()
           window.img = '<img id="img" style="' + imgSize + '" src=\'' + realsrc + '\'/>';
-          window.img += '<style>html,body{margin: 0; padding: 0;} body img{box-sizing: border-box;}></style>';
+          window.img += '<style>html,body{margin: 0; padding: 0;} body img{box-sizing: border-box; width: 100%;}></style>';
           window.img += '<script>window.onload = function(){' +
             'parent.document.getElementById(\'' + frameid+ '\').width = document.getElementById(\'img\').width + \'px\';' +
-            'parent.document.getElementById(\'' + frameid+ '\').height = document.getElementById(\'img\').height + \'px\';' +
-            '}<' + '/script>'
+            'parent.document.getElementById(\'' + frameid+ '\').height = document.getElementById(\'img\').height + \'px\'; '
+          if(opt.iframeCallback){
+            window.img += 'var cb = ' + opt.iframeCallback.toString() + '; cb(parent.document.getElementById(\'' + frameid + '\'));'
+          }
+          window.img += '}</script>'
           var iframe = document.createElement('iframe')
           iframe.className = "img_frame"
           iframe.id = frameid

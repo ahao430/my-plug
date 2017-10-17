@@ -67,15 +67,15 @@ var SwipePage = (function(){
           lastX = x
           lastY = y
 
-          if(absY > absX){
-            newDirection = 'vertical'
-            body.style.overflowX = 'hidden'
-          }else{
-            newDirection = 'horizental'
-            body.style.overflowY = 'hidden'
-          }
-
           if(!direction){
+            if(absY > absX){
+              newDirection = 'vertical'
+              body.style.overflowX = 'hidden'
+            }else{
+              newDirection = 'horizental'
+              body.style.overflowY = 'hidden'
+            }
+
             direction = newDirection
           }else if(direction !== newDirection) {
             return
@@ -124,13 +124,18 @@ var SwipePage = (function(){
 
     this._changePage = function(opt) {
       var dom = document.querySelector(opt.dom)
+      // console.log(deltaX)
+      // console.log(opt.curIndex)
       if (absX > absY && absX >= 50) {
         // 左滑，下一页
         if (deltaX < 0 && opt.canLeft) {
           if (opt.curIndex === opt.navLength - 1) {
+            opt.curIndex
             opt.lastCallback && opt.lastCallback()
             dom.style.transform = 'translateX(' + 0 +'px)';
           } else {
+            opt.curIndex++
+            dom.style.transform = 'translateX(' + 0 +'px)';
             opt.nextCallback && opt.nextCallback()
           }
         } else if (deltaX > 0 && opt.canRight){
@@ -139,6 +144,8 @@ var SwipePage = (function(){
             opt.firstCallback && opt.firstCallback()
             dom.style.transform = 'translateX(' + 0 +'px)';
           } else {
+            opt.curIndex--
+            dom.style.transform = 'translateX(' + 0 +'px)';
             opt.prevCallback && opt.prevCallback()
           }
         }
