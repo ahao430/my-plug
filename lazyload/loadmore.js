@@ -25,11 +25,11 @@
     var seeHeight = document.documentElement.clientHeight;
     var footer = document.querySelector(footer)
     var footerTop = footer.offsetTop
-    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var scrollTop = document.documentElement.scrollTop + document.body.scrollTop;
     
     footerTop = footer.offsetTop
     if(scrollTop > footerTop - seeHeight - 80){
-      console.log('load')
+      // console.log('load')
       cb&&cb()
     }
   }

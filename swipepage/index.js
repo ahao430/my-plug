@@ -34,7 +34,7 @@ var SwipePage = (function(){
         }
       }
     } else {
-      console.log('未配置参数或格式错误，使用默认配置')
+      // console.log('未配置参数或格式错误，使用默认配置')
       opt = defaults
     }
 
@@ -64,21 +64,22 @@ var SwipePage = (function(){
           var absY = Math.abs(deltaY);
           var newDirection = null
 
+          var dirY = Math.abs(y - startY)
+          var dirX = Math.abs(x - startX)
+
           lastX = x
           lastY = y
 
-          if(!direction){
-            if(absY > absX){
-              newDirection = 'vertical'
+          // console.log(direction)
+
+          if(!direction && dirX >=10 || dirY >=10){
+            if(dirY > dirX){
+              direction = 'vertical'
               body.style.overflowX = 'hidden'
             }else{
-              newDirection = 'horizental'
+              direction = 'horizental'
               body.style.overflowY = 'hidden'
             }
-
-            direction = newDirection
-          }else if(direction !== newDirection) {
-            return
           }
 
           if (deltaX > 0) {
@@ -88,8 +89,11 @@ var SwipePage = (function(){
             if (!opt.canLeft) return;
           }
 
-          dom.style.transform = 'translateX(' + (x - startX) +'px)';
-      },100));
+          if(direction === 'horizental'){
+            dom.style.transform = 'translateX(' + (x - startX) +'px)';
+          }
+
+      },20));
       dom.addEventListener('touchend', function(e){
         // console.log(e.changedTouches[0]);
 
@@ -108,7 +112,7 @@ var SwipePage = (function(){
 
         // 判断快速滑动还是慢速
         if (deltaTime <= 100) {
-          _self._changePage(opt);
+          _self._changePage(opt, endX);
         } else {
           var screenWidth = screen.width;
           if (absX >= screenWidth/3) {
@@ -122,20 +126,28 @@ var SwipePage = (function(){
       })
     }
 
-    this._changePage = function(opt) {
+    this._changePage = function(opt, endX) {
       var dom = document.querySelector(opt.dom)
-      // console.log(deltaX)
-      // console.log(opt.curIndex)
+      var trans = dom.style.transition
+      var sw = screen.width
+
       if (absX > absY && absX >= 50) {
         // 左滑，下一页
         if (deltaX < 0 && opt.canLeft) {
           if (opt.curIndex === opt.navLength - 1) {
-            opt.curIndex
             opt.lastCallback && opt.lastCallback()
             dom.style.transform = 'translateX(' + 0 +'px)';
           } else {
+            dom.style.opacity = 0
+            dom.style.transform = 'translateX(' + sw +'px)';
+
             opt.curIndex++
-            dom.style.transform = 'translateX(' + 0 +'px)';
+            setTimeout(function(){
+              dom.style.transition = trans
+              dom.style.transform = 'translateX(' + 0 +'px)';
+              dom.style.opacity = 1
+            }, 0)
+
             opt.nextCallback && opt.nextCallback()
           }
         } else if (deltaX > 0 && opt.canRight){
@@ -144,9 +156,17 @@ var SwipePage = (function(){
             opt.firstCallback && opt.firstCallback()
             dom.style.transform = 'translateX(' + 0 +'px)';
           } else {
+            dom.style.transition = null
+            console.log(_self.sw)
+            dom.style.transform = 'translateX(' + (-sw) +'px)';
+
             opt.curIndex--
-            dom.style.transform = 'translateX(' + 0 +'px)';
-            opt.prevCallback && opt.prevCallback()
+            setTimeout(function(){
+              dom.style.transition = trans
+              dom.style.transform = 'translateX(' + 0 +'px)';
+              opt.prevCallback && opt.prevCallback()
+            }, 0)
+
           }
         }
       }
