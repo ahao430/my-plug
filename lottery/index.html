@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+  <title>抽奖</title>
+  <link rel="stylesheet" type="text/css" href="turntable.css">
+  <style>
+    html, body, ul, li, h3, p{margin: 0; padding: 0;}
+    li{list-style: none;}
+    
+    body{background: url(bg.png) #FE3800;}
+    h3{text-align: center; margin: 20px 0; color: yellow;letter-spacing: 5px; font-size: 25px;}
+    
+    .tip{
+      padding: 0 20px;
+      color: #000;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .marquee{
+      overflow: hidden;
+      padding: 10px 20px;
+      margin: 20px 0;
+      font-size: 12px;
+      text-align: center;
+      height: 100px;
+      color: yellow;
+    }
+    .marquee ul{}
+    .marquee ul li{
+      line-height: 2;
+    }
+  </style>
+</head>
+<body>
+  <h3>幸运大抽奖</h3>
+
+  <div class="turntable" id="turntable">
+    <div class="turntable_container" id="turntable_container">
+      <canvas id="turntable_canvas" class="turntable_canvas" width="300" height="300"></canvas>
+    </div>
+    <div class="turntable_btn" id="turntable_pin">
+      <img src="turntable_pin.png" alt="">
+    </div>
+  </div>
+  
+  <div class="tip">
+    <p>每人每天限3次，每次间隔4小时</p>  
+  </div>
+
+  <div class="marquee"></div>
+
+  <script src="turntable.js"></script>
+  <script src="iAlert.js"></script>
+  <script>
+    var prizes = getPrizes()
+
+    var recordsStr = '<li>' + getRecords().join('</li><li>') + '</li>'
+    runMarquee()
+
+    TurnTable.init({
+      prizes: prizes,
+      chance: 3,
+      rotateTime: 3, // 转盘时间
+      waitTime: 4 * 3600, // 两次抽奖间隔时间
+      getResult: function(){
+        return getReslut()
+      },
+      success: function(index){
+        if (prizes[index] === '红包') alert('恭喜中奖！')
+        else iAlert('很遗憾，没有中奖！')
+      },
+      waiting: function(){
+        var lastTimeStamp = localStorage.getItem('lottery_timestamp')
+        var now = new Date().getTime()
+        var waitTime = formatTime(now - lastTimeStamp)
+        console.log(waitTime)
+        iAlert('请等待' + waitTime + '后再次抽奖！')
+      },
+      noChance: function(){
+        iAlert('您今日的抽奖机会已用完！')
+      }
+    })
+
+    function $(el){return document.querySelector(el)}
+    function getPrizes(){
+      return ['5元红包', '谢谢参与', '10元红包', '谢谢参与', '50元红包', '谢谢参与']
+    }
+    function getReslut(){
+      return 1
+    }
+    function getRecords(){
+      return [
+        '恭喜用户虫***折获得5元红包！',
+        '恭喜用户尚***包获得10元红包！',
+        '恭喜用户小***杨获得5元红包！',
+        '恭喜用户1***o获得5元红包！',
+        '恭喜用户z***A获得50元红包！',
+        '恭喜用户福***8获得10元红包！',
+        '恭喜用户2***晴获得10元红包！',
+        '恭喜用户福***8获得5元红包！',
+        '恭喜用户x***0获得5元红包！',
+        '恭喜用户晕***猪获得5元红包！',
+        '恭喜用户b***呆获得10元红包！',
+        '恭喜用户张***5获得5元红包！',
+        '恭喜用户戒***5获得5元红包！',
+        '恭喜用户董***0获得10元红包！',
+        '恭喜用户幕***波获得5元红包！',
+        '恭喜用户瑞***亚获得5元红包！',
+        '恭喜用户且***1获得5元红包！',
+        '恭喜用户萌***菜获得10元红包！',
+        '恭喜用户前***9获得10元红包！',
+        '恭喜用户a***大获得50元红包！',
+        '恭喜用户走***爱获得5元红包！',
+        '恭喜用户王***7获得5元红包！',
+        '恭喜用户春***群获得10元红包！',
+        '恭喜用户t***6获得5元红包！',
+        '恭喜用户伊***人获得10元红包！',
+        '恭喜用户爱***呀获得5元红包！',
+        '恭喜用户啊***啊获得5元红包！',
+        '恭喜用户远***3获得50元红包！',
+        '恭喜用户h***n获得5元红包！',
+        '恭喜用户苹***运获得5元红包！',
+        '恭喜用户爱***你获得10元红包！'
+      ]
+    }
+
+    function runMarquee(){
+      var marquee = $('.marquee')
+      marquee.innerHTML = '<ul>' + recordsStr + recordsStr + '</ul>'
+      
+      var ul = $('.marquee ul')
+      var h = ul.clientHeight
+
+      setInterval(function(){
+        marquee.scrollTop += 1
+        if(marquee.scrollTop >= h / 2) {
+          marquee.scrollTop = 0
+        }
+      }, 100)
+    }
+
+    function formatTime(time){
+      time = 4 * 3600 * 1000 - time
+      console.log(time)
+      var Hours = ~~(time / 3600000)
+      var Minutes = ~~(time / 60000 % 60)
+      var seconds = ~~(time / 1000 % 60)
+      return Hours + '小时' + Minutes + '分钟' + seconds + '秒'
+    }
+  </script>
+</body>
+</html>
