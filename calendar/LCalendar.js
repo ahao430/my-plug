@@ -1,8 +1,10 @@
 window.LCalendar = (function() {
+    var now = new Date()
+
     var MobileCalendar = function() {
         this.gearDate;
-        this.minY = 2010;
-        this.minY2 = 2010;
+        this.minY = 1900;
+        this.minY2 = 1900;
         this.minM = 1;
         this.minM2 = 1;
         this.minD = 1;
@@ -19,9 +21,52 @@ window.LCalendar = (function() {
         this.callback = null;
         this.startX = null;
         this.startY = null;
+        this.default = null;
+        this.date_yy_1_value = null;
+        this.date_mm_1_value = null;
+        this.date_dd_1_value = null;
+        this.date_yy_2_value = null;
+        this.date_mm_2_value = null;
+        this.date_dd_2_value = null;
     }
     MobileCalendar.prototype = {
+        formatDate: function(date, fmt){
+          date = new Date(date)
+          var o = {
+            "Y+" : date.getFullYear(), //年
+            "M+" : date.getMonth()+1, //月份
+            "d+" : date.getDate(), //日
+            "h+" : date.getHours()%12 == 0 ? 12 : date.getHours()%12, //小时
+            "H+" : date.getHours(), //小时
+            "m+" : date.getMinutes(), //分
+            "s+" : date.getSeconds(), //秒
+            "q+" : Math.floor((date.getMonth()+3)/3), //季度
+            "S" : date.getMilliseconds() //毫秒
+          };
+          var week = {
+            "0" : "/u65e5",
+            "1" : "/u4e00",
+            "2" : "/u4e8c",
+            "3" : "/u4e09",
+            "4" : "/u56db",
+            "5" : "/u4e94",
+            "6" : "/u516d"
+          };
+          if(/(Y+)/.test(fmt)){
+            fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+          }
+          if(/(E+)/.test(fmt)){
+            fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[date.getDay()+""]);
+          }
+          for(var k in o){
+            if(new RegExp("("+ k +")").test(fmt)){
+              fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+            }
+          }
+          return fmt;
+        },
         init: function(params) {
+            this.params = params
             this.type = params.type;
             this.trigger = document.querySelector(params.trigger);
             if (this.trigger.getAttribute("data-lcalendar") != null) {
@@ -44,6 +89,7 @@ window.LCalendar = (function() {
                 this.minD = ~~minArr[2];
                 this.minD2 = ~~minArr[2];
             }
+            var today = this.formatDate(now, 'YYYY-MM-dd')
             if (params.maxDate) {
                 var maxArr = params.maxDate.split('-');
                 this.maxY = ~~maxArr[0];
@@ -52,11 +98,19 @@ window.LCalendar = (function() {
                 this.maxM2 = ~~maxArr[1];
                 this.maxD = ~~maxArr[2];
                 this.maxD2 = ~~maxArr[2];
+                if (new Date(params.maxDate).getTime() > new Date(today).getTime()) {
+                    this.default = today
+                } else {
+                    this.default = params.maxDate
+                }
+            } else {
+                this.default = today
             }
             if (params.callback) {
                 this.callback = params.callback
             }
             this.bindEvent(this.type);
+            
         },
         bindEvent: function(type) {
             var _self = this;
@@ -64,10 +118,11 @@ window.LCalendar = (function() {
             function popupDate(e) {
                 _self.gearDate = document.createElement("div");
                 _self.gearDate.className = "gearDate";
-                // console.log(_self.params)
                 _self.gearDate.innerHTML = '<div class="date_ctrl slideInUp">' +
+                        '<div class="date_title">请选择时间</div>' +
                         '<div class="date_btn_box date">' +
-                            '<div class="date_btn start_date active">开始日期</div>' +
+                            '<div class="date_btn start_date">开始日期</div>' +
+                            '<div class="date_btn_seperate">-</div>' +
                             '<div class="date_btn end_date">结束日期</div>' +
                         '</div>' +
                         '<div class="date_roll_mask">' +
@@ -75,19 +130,19 @@ window.LCalendar = (function() {
                                 '<div>' +
                                     '<div class="gear date_yy" data-datetype="date_yy"></div>' +
                                     '<div class="date_grid">' +
-                                        '<div>年</div>' +
+                                    //     '<div>年</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div>' +
                                     '<div class="gear date_mm" data-datetype="date_mm"></div>' +
                                     '<div class="date_grid">' +
-                                        '<div>月</div>' +
+                                        // '<div>月</div>' +
                                     '</div>' +
                                 '</div>' +
                                 '<div>' +
                                     '<div class="gear date_dd" data-datetype="date_dd"></div>' +
                                     '<div class="date_grid">' +
-                                        '<div>日</div>' +
+                                        // '<div>日</div>' +
                                     '</div>' +
                                 '</div>' +
                             '</div>' +
@@ -124,6 +179,10 @@ window.LCalendar = (function() {
                 date_yy.addEventListener('touchend', gearTouchEnd);
                 date_mm.addEventListener('touchend', gearTouchEnd);
                 date_dd.addEventListener('touchend', gearTouchEnd);
+
+                setTimeout(function(){
+                    start_date_btn.click()
+                }, 500)
             }
             //初始化年月日插件默认值
             function dateCtrlInit() {
@@ -141,9 +200,12 @@ window.LCalendar = (function() {
                 } else {
                     dateArr.yy = dateArr.yy - _self.minY;
                 }
-                _self.gearDate.querySelector(".date_yy").setAttribute("val", dateArr.yy);
-                _self.gearDate.querySelector(".date_mm").setAttribute("val", dateArr.mm);
-                _self.gearDate.querySelector(".date_dd").setAttribute("val", dateArr.dd);
+                _self.gearDate.querySelector(".date_yy").setAttribute("val_1", dateArr.yy);
+                _self.gearDate.querySelector(".date_mm").setAttribute("val_1", dateArr.mm);
+                _self.gearDate.querySelector(".date_dd").setAttribute("val_1", dateArr.dd);
+                _self.gearDate.querySelector(".date_yy").setAttribute("val_2", dateArr.yy);
+                _self.gearDate.querySelector(".date_mm").setAttribute("val_2", dateArr.mm);
+                _self.gearDate.querySelector(".date_dd").setAttribute("val_2", dateArr.dd);
                 setDateGearTooth();
             }
             
@@ -168,36 +230,38 @@ window.LCalendar = (function() {
                 var passY = maxYY - minYY + 1;
                 var date_yy = _self.gearDate.querySelector(".date_yy");
                 var itemStr = "";
-                if (date_yy && date_yy.getAttribute("val")) {
+                var val = 'val_' + (_self.curIndex + 1)
+                var top = 'top_' + (_self.curIndex + 1)
+                if (date_yy && date_yy.getAttribute(val)) {
                     //得到年份的值
-                    var yyVal = parseInt(date_yy.getAttribute("val"));
+                    var yyVal = parseInt(date_yy.getAttribute(val));
                     //p 当前节点前后需要展示的节点个数
                     for (var p = 0; p <= passY - 1; p++) {
                         itemStr += "<div class='tooth'>" + (minYY + p) + "</div>";
                     }
                     date_yy.innerHTML = itemStr;
-                    var top = Math.floor(parseFloat(date_yy.getAttribute('top')));
-                    if (!isNaN(top)) {
-                        top % 2 == 0 ? (top = top) : (top = top + 1);
-                        top > 8 && (top = 8);
+                    var topV = Math.floor(parseFloat(date_yy.getAttribute(top)));
+                    if (!isNaN(topV)) {
+                        topV % 2 == 0 ? (topV = topV) : (topV = topV + 1);
+                        topV > 8 && (topV = 8);
                         var minTop = 8 - (passY - 1) * 2;
-                        top < minTop && (top = minTop);
-                        date_yy.style["-webkit-transform"] = 'translate3d(0,' + top + 'em,0)';
-                        date_yy.setAttribute('top', top + 'em');
-                        yyVal = Math.abs(top - 8) / 2;
-                        date_yy.setAttribute("val", yyVal);
+                        topV < minTop && (topV = minTop);
+                        date_yy.style["-webkit-transform"] = 'translate3d(0,' + topV + 'em,0)';
+                        date_yy.setAttribute(top, topV + 'em');
+                        yyVal = Math.abs(topV - 8) / 2;
+                        date_yy.setAttribute(val, yyVal);
                     } else {
                         date_yy.style["-webkit-transform"] = 'translate3d(0,' + (8 - yyVal * 2) + 'em,0)';
-                        date_yy.setAttribute('top', 8 - yyVal * 2 + 'em');
+                        date_yy.setAttribute(top, 8 - yyVal * 2 + 'em');
                     }
                 } else {
                     return;
                 }
                 var date_mm = _self.gearDate.querySelector(".date_mm");
-                if (date_mm && date_mm.getAttribute("val")) {
+                if (date_mm && date_mm.getAttribute(val)) {
                     itemStr = "";
                     //得到月份的值
-                    var mmVal = parseInt(date_mm.getAttribute("val"));
+                    var mmVal = parseInt(date_mm.getAttribute(val));
                     var maxM = 11;
                     var minM = 0;
                     //当年份到达最大值
@@ -215,21 +279,21 @@ window.LCalendar = (function() {
                     date_mm.innerHTML = itemStr;
                     if (mmVal > maxM) {
                         mmVal = maxM;
-                        date_mm.setAttribute("val", mmVal);
+                        date_mm.setAttribute(val, mmVal);
                     } else if (mmVal < minM) {
                         mmVal = maxM;
-                        date_mm.setAttribute("val", mmVal);
+                        date_mm.setAttribute(val, mmVal);
                     }
                     date_mm.style["-webkit-transform"] = 'translate3d(0,' + (8 - (mmVal - minM) * 2) + 'em,0)';
-                    date_mm.setAttribute('top', 8 - (mmVal - minM) * 2 + 'em');
+                    date_mm.setAttribute(top, 8 - (mmVal - minM) * 2 + 'em');
                 } else {
                     return;
                 }
                 var date_dd = _self.gearDate.querySelector(".date_dd");
-                if (date_dd && date_dd.getAttribute("val")) {
+                if (date_dd && date_dd.getAttribute(val)) {
                     itemStr = "";
                     //得到日期的值
-                    var ddVal = parseInt(date_dd.getAttribute("val"));
+                    var ddVal = parseInt(date_dd.getAttribute(val));
                     //返回月份的天数
                     var maxMonthDays = calcDays(yyVal, mmVal);
                     //p 当前节点前后需要展示的节点个数
@@ -249,15 +313,34 @@ window.LCalendar = (function() {
                     date_dd.innerHTML = itemStr;
                     if (ddVal > maxD) {
                         ddVal = maxD;
-                        date_dd.setAttribute("val", ddVal);
+                        date_dd.setAttribute(val, ddVal);
                     } else if (ddVal < minD) {
                         ddVal = minD;
-                        date_dd.setAttribute("val", ddVal);
+                        date_dd.setAttribute(val, ddVal);
                     }
                     date_dd.style["-webkit-transform"] = 'translate3d(0,' + (8 - (ddVal - minD) * 2) + 'em,0)';
-                    date_dd.setAttribute('top', 8 - (ddVal - minD) * 2 + 'em');
+                    date_dd.setAttribute(top, 8 - (ddVal - minD) * 2 + 'em');
                 } else {
                     return;
+                }
+                // 设置当前日期
+                    var sy = date_yy.getAttribute(val);
+                    sy = minYY + +sy
+                    var sm = +date_mm.getAttribute(val) + 1;
+                    if(sm < 10){
+                        sm = '0' + sm
+                    }
+                    var sd = +date_dd.getAttribute(val) + 1;
+                    if(sd < 10){
+                        sd = '0' + sd
+                    }
+                    var sdate = '' + sy + '-' + sm + '-' + sd
+                if(_self.curIndex === 0){
+                    _self.startDate = sdate
+                    _self.gearDate.querySelector('.start_date').innerHTML = sdate
+                }else{
+                    _self.endDate = sdate
+                    _self.gearDate.querySelector('.end_date').innerHTML = sdate
                 }
             }
             //求月份最大天数
@@ -326,9 +409,10 @@ window.LCalendar = (function() {
                 clearInterval(target["int_" + target.id]);
                 target["old_" + target.id] = e.targetTouches[0].screenY;
                 target["o_t_" + target.id] = (new Date()).getTime();
-                var top = target.getAttribute('top');
-                if (top) {
-                    target["o_d_" + target.id] = parseFloat(top.replace(/em/g, ""));
+                var top = 'top_' + (_self.curIndex + 1)
+                var topV = target.getAttribute(top);
+                if (topV) {
+                    target["o_d_" + target.id] = parseFloat(topV.replace(/em/g, ""));
                 } else {
                     target["o_d_" + target.id] = 0;
                 }
@@ -366,7 +450,12 @@ window.LCalendar = (function() {
                 var f = (target["new_" + target.id] - target["old_" + target.id]) * 30 / window.innerHeight;
                 target["pos_" + target.id] = target["o_d_" + target.id] + f;
                 target.style["-webkit-transform"] = 'translate3d(0,' + target["pos_" + target.id] + 'em,0)';
-                target.setAttribute('top', target["pos_" + target.id] + 'em');
+                if(_self.curIndex === 0){
+                    target.setAttribute('top_1', target["pos_" + target.id] + 'em');
+                    target.setAttribute('top_2', target["pos_" + target.id] + 'em');
+                }else{
+                    target.setAttribute('top_2', target["pos_" + target.id] + 'em');
+                }
                 if (e.targetTouches[0].screenY < 1) {
                     gearTouchEnd(e);
                 };
@@ -439,12 +528,12 @@ window.LCalendar = (function() {
                     minMM = _self.minM2
                     minDD = _self.minD2
                 }
-
                 function setDuration() {
                     target.style.webkitTransitionDuration = target.style.transitionDuration = '200ms';
                     stopGear = true;
                 }
                 var passY = maxYY - minYY + 1;
+                var top = 'top_' + (_self.curIndex + 1)
                 clearInterval(target["int_" + target.id]);
                 target["int_" + target.id] = setInterval(function() {
                     var pos = target["pos_" + target.id];
@@ -468,15 +557,16 @@ window.LCalendar = (function() {
                             }
                             if (stopGear) {
                                 var gearVal = Math.abs(pos - 8) / 2;
-                                setGear(target, gearVal);
+                                 setGear(target, gearVal);
                                 clearInterval(target["int_" + target.id]);
-                                finishMobileDate()
+                                 finishMobileDate()
                             }
                             break;
                         case "date_mm":
                             var date_yy = _self.gearDate.querySelector(".date_yy");
                             //得到年份的值
-                            var yyVal = parseInt(date_yy.getAttribute("val"));
+                            var val = 'val_' + (_self.curIndex + 1)
+                            var yyVal = parseInt(date_yy.getAttribute(val));
                             var maxM = 11;
                             var minM = 0;
                             //当年份到达最大值
@@ -494,18 +584,19 @@ window.LCalendar = (function() {
                             }
                             if (stopGear) {
                                 var gearVal = Math.abs(pos - 8) / 2 + minM;
-                                setGear(target, gearVal);
+                                 setGear(target, gearVal);
                                 clearInterval(target["int_" + target.id]);
-                                finishMobileDate()
+                                 finishMobileDate()
                             }
                             break;
                         case "date_dd":
                             var date_yy = _self.gearDate.querySelector(".date_yy");
                             var date_mm = _self.gearDate.querySelector(".date_mm");
                             //得到年份的值
-                            var yyVal = parseInt(date_yy.getAttribute("val"));
+                            var val = 'val_' + (_self.curIndex + 1)
+                            var yyVal = parseInt(date_yy.getAttribute(val));
                             //得到月份的值
-                            var mmVal = parseInt(date_mm.getAttribute("val"));
+                            var mmVal = parseInt(date_mm.getAttribute(val));
                             //返回月份的天数
                             var maxMonthDays = calcDays(yyVal, mmVal);
                             var maxD = maxMonthDays - 1;
@@ -525,23 +616,33 @@ window.LCalendar = (function() {
                             }
                             if (stopGear) {
                                 var gearVal = Math.abs(pos - 8) / 2 + minD;
-                                setGear(target, gearVal);
+                                 setGear(target, gearVal);
                                 clearInterval(target["int_" + target.id]);
-                                finishMobileDate()
+                                 finishMobileDate()
                             }
                             break;
                         default:
                     }
                     target["pos_" + target.id] = pos;
                     target.style["-webkit-transform"] = 'translate3d(0,' + pos + 'em,0)';
-                    target.setAttribute('top', pos + 'em');
+                    if(_self.curIndex === 0){
+                        target.setAttribute('top_1', pos + 'em');
+                        target.setAttribute('top_2', pos + 'em');
+                    }else{
+                        target.setAttribute('top_2', pos + 'em');
+                    }
                     d++;
                 }, 30);
             }
             //控制插件滚动后停留的值
             function setGear(target, val) {
                 val = Math.round(val);
-                target.setAttribute("val", val);
+                if (_self.curIndex === 0) {
+                    target.setAttribute("val_1", val);
+                } else if (_self.curIndex === 1) {
+                    target.setAttribute("val_2", val);
+                }
+                
                 if (/date/.test(target.dataset.datetype)) {
                     setDateGearTooth();
                 } else {
@@ -552,22 +653,33 @@ window.LCalendar = (function() {
             function selectStart(e){
                 e.preventDefault();
                 _self.curIndex = 0
+                setDateGearTooth();
                 _self.gearDate.querySelector(".start_date").className = "date_btn start_date active"
                 _self.gearDate.querySelector(".end_date").className = "date_btn end_date"
-                _self.gearDate.querySelector(".end_date").innerHTML = '结束日期'
-                _self.endDate = ''
+                // if(!_self.startDate){
+                //     _self.gearDate.querySelector(".start_date").innerHTML = _self.default
+                //     _self.startDate = _self.default
+                //     _self.gearDate.querySelector(".end_date").innerHTML = '结束日期'
+                //     _self.endDate = ''
+                // }
             }
             // 选择结束日期
             function selectEnd(e){
-                e.preventDefault();
+                if (!_self.startDate) return false
                 _self.curIndex = 1
+                e.preventDefault();
+                setDateGearTooth();
+                setDateGearTooth();
                 _self.gearDate.querySelector(".start_date").className = "date_btn start_date"
                 _self.gearDate.querySelector(".end_date").className = "date_btn end_date active"
 
+                // if(!_self.endDate){
+                //     _self.gearDate.querySelector(".end_date").innerHTML = _self.startDate
+                //     _self.endDate = _self.startDate
+                // }
             }
             //取消
             function closeMobileCalendar(e) {
-                // console.log(e)
                 e.preventDefault();
                 var evt;
                 try {
@@ -578,6 +690,7 @@ window.LCalendar = (function() {
                     evt.initEvent('input', true, true);
                 }
                 _self.trigger.dispatchEvent(evt);
+                _self.trigger.removeEventListener('click', popupDate)
                 document.body.removeChild(_self.gearDate);
                 _self.gearDate=null;
             }
@@ -600,10 +713,11 @@ window.LCalendar = (function() {
                     minDD = _self.minD2
                 }
                 var passY = maxYY - minYY + 1;
-                var date_yy = parseInt(Math.round(_self.gearDate.querySelector(".date_yy").getAttribute("val")));
-                var date_mm = parseInt(Math.round(_self.gearDate.querySelector(".date_mm").getAttribute("val"))) + 1;
+                var val = 'val_' + (_self.curIndex + 1)
+                var date_yy = parseInt(Math.round(_self.gearDate.querySelector(".date_yy").getAttribute(val)));
+                var date_mm = parseInt(Math.round(_self.gearDate.querySelector(".date_mm").getAttribute(val))) + 1;
                 date_mm = date_mm > 9 ? date_mm : '0' + date_mm;
-                var date_dd = parseInt(Math.round(_self.gearDate.querySelector(".date_dd").getAttribute("val"))) + 1;
+                var date_dd = parseInt(Math.round(_self.gearDate.querySelector(".date_dd").getAttribute(val))) + 1;
                 date_dd = date_dd > 9 ? date_dd : '0' + date_dd;
                 var start_date_btn = _self.gearDate.querySelector(".start_date");
                 var end_date_btn = _self.gearDate.querySelector(".end_date");
@@ -622,8 +736,7 @@ window.LCalendar = (function() {
             // 回传数据
             function confirmDate(e){
                 if (!_self.startDate || !_self.endDate) {
-                    // alert('请完整选择')
-                    // _self.callback && _self.callback(false)
+                    _self.callback && _self.callback(false, null, null)
                     return false
                 }
                 _self.callback && _self.callback(true, _self.startDate, _self.endDate)
@@ -632,9 +745,8 @@ window.LCalendar = (function() {
                 _self.endDate = null
                 closeMobileCalendar(e)
             }
-            _self.trigger.addEventListener('click', {
-                "date": popupDate
-            }[type]);
+
+            _self.trigger.addEventListener('click', popupDate);
         }
     }
     return MobileCalendar;
