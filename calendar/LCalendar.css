@@ -15,8 +15,8 @@
  */
 .gearDate {
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 10px;
-    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
     display: block;
     position: fixed;
     top: 0;
@@ -35,10 +35,11 @@
     color: #000;
     margin: 0;
     height: auto;
-    width: 100%;
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 6px;
     z-index: 9901;
     overflow: hidden;
     -webkit-transform: translate3d(0, 0, 0);
@@ -84,15 +85,16 @@
     height: auto;
     overflow: hidden;
     background-color: transparent;
+    padding: 10px 0;
     -webkit-mask: -webkit-gradient(linear, 0% 50%, 0% 100%, from(#debb47), to(rgba(36, 142, 36, 0)));
-    -webkit-mask: -webkit-linear-gradient(top, #debb47 50%, rgba(36, 142, 36, 0))
+    -webkit-mask: -webkit-linear-gradient(top, #debb47 50%, rgba(36, 142, 36, 0));
 }
 
 .ym_roll>div,
 .date_roll>div,
 .datetime_roll>div,
 .time_roll>div {
-    font-size: 2.3em;
+    font-size: 1em;
     height: 10em;
     float: left;
     background-color: transparent;
@@ -101,7 +103,8 @@
     -webkit-box-flex: 4;
     -webkit-flex: 4;
         -ms-flex: 4;
-            flex: 4
+            flex: 4;
+    margin: -2em 0 -2em;
 }
 
 .ym_roll>div .gear,
@@ -116,16 +119,15 @@
 }
 
 .date_roll_mask {
-    -webkit-mask: -webkit-gradient(linear, 0% 40%, 0% 0%, from(#debb47), to(rgba(36, 142, 36, 0)));
-    -webkit-mask: -webkit-linear-gradient(bottom, #debb47 50%, rgba(36, 142, 36, 0));
-    padding: 0
+    padding: 0;
+    background: #fff;
 }
 
 .date_roll>div:nth-child(2) {
-    -webkit-box-flex: 2;
-    -webkit-flex: 2;
-        -ms-flex: 2;
-            flex: 2
+    -webkit-box-flex: 4;
+    -webkit-flex: 4;
+        -ms-flex: 4;
+            flex: 4
 }
 
 .date_roll>div:nth-child(1),
@@ -153,13 +155,13 @@
 .date_grid {
     position: relative;
     top: 4em;
-    width: 100%;
+    width: 80%;
     height: 2em;
-    margin: 0;
+    margin: 0 auto;
     box-sizing: border-box;
     z-index: 0;
-    border-top: 1px solid #abaeb5;
-    border-bottom: 1px solid #abaeb5
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8
 }
 
 .date_grid>div {
@@ -167,7 +169,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    font-size: .8em;
+    font-size: 15px;
     line-height: 2.5em
 }
 
@@ -201,25 +203,23 @@
     right: 5em
 }
 
-.date_btn {
-    color: #0575f2;
-    font-size: 1.6em;
-    line-height: 1em;
+.date_title{
+    background: #ffd56c;
+    color: #fff;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
-    padding: .8em 1em
+    font-size: 14px;
 }
 
-.date_btn_box:before,
-.date_btn_box:after {
-    content: '';
-    position: absolute;
-    height: 1px;
-    width: 100%;
-    display: block;
-    background-color: #96979b;
-    z-index: 15;
-    -webkit-transform: scaleY(0.33);
-            transform: scaleY(0.33)
+.date_btn {
+    color: #0575f2;
+    font-size: 15px;
+    line-height: 15px;
+    text-align: center;
+    width: 140px;
+    height: 40px;
+    line-height: 40px;
 }
 
 .date_btn_box {
@@ -235,9 +235,14 @@
     -webkit-align-items: stretch;
         -ms-flex-align: stretch;
             align-items: stretch;
-    background-color: #f1f2f4;
+    background-color: #fff;
     position: relative;
     padding: 10px 0;
+    background: #f6f6f6;
+}
+.date_btn_box.date{
+    background: #fff;
+    padding: 18px 0;
 }
 
 .date_btn_box:before {
@@ -255,15 +260,15 @@
 }
 
 .date_roll>div:nth-child(1) .gear {
-    text-indent: 20%
+    // text-indent: 20%
 }
 
 .date_roll>div:nth-child(2) .gear {
-    text-indent: -20%
+    // text-indent: -20%
 }
 
 .date_roll>div:nth-child(3) .gear {
-    text-indent: -55%
+    // text-indent: -55%
 }
 
 .datetime_roll>div .gear {
@@ -294,29 +299,38 @@
 .tooth {
     height: 2em;
     line-height: 2em;
-    text-align: center
+    text-align: center;
+    font-size: 15px;
 }
 
 .date_btn_box.date{
-    justify-content: space-between;
+    justify-content: center;
+}
+.date_btn_seperate{
+    height: 40px;
+    line-height: 40px;
+    wdith: 10px;
+    margin: 0 10px;
 }
 .date_btn.start_date,
 .date_btn.end_date{
-    background: #ccc;
-    border-radius: 10px;
-    margin: 0 20px;
-    padding: 8px 20px;
+    background: #e5e5e5;
+    border-radius: 6px;
+    margin: 0 0px;
+    padding: 0;
     color: #999;
 }
 .date_btn.start_date.active,
 .date_btn.end_date.active{
-    background: #cc5e5e;
-    color: #fff;
+    background: #ffe6e5;
+    color: #ff7575;
 }
 .date_btn.lcalendar_finish{
-    width: 80%;
-    padding: 8px 0;
-    background: #cc5e5e;
+    width: 300px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+    background: #ff7575;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 6px;
 }
