@@ -1,5 +1,5 @@
 /**
- * LCalendar移动端日期时间选择控件
+ * LCalendar移动端日期时间选择控件 ssss
  * 
  * version:1.7.1
  * 
@@ -96,9 +96,11 @@
 .time_roll>div {
     font-size: 1em;
     height: 10em;
+    display: block;
     float: left;
     background-color: transparent;
     position: relative;
+    width: 0%;
     overflow: hidden;
     -webkit-box-flex: 4;
     -webkit-flex: 4;
@@ -112,6 +114,7 @@
 .datetime_roll>div .gear,
 .time_roll>div .gear {
     width: 100%;
+    display: block;
     float: left;
     position: absolute;
     z-index: 9902;
